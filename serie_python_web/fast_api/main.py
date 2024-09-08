@@ -1,7 +1,7 @@
-from fastapi import FastAPI
-import requests
 import pybreaker
 import redis
+import requests
+from fastapi import FastAPI
 
 # Configuração do circuit breaker
 breaker = pybreaker.CircuitBreaker(
@@ -22,8 +22,10 @@ def call_external_service(url):
 # Configuração do Redis para fallback
 redis_client = redis.StrictRedis(host='localhost', port=6379, db=0)
 
+
 def buscar_dados(chave):
     return redis_client.get(chave)
+
 
 # Rota do FastAPI para lidar com a chamada ao serviço externo
 @app.get("/pokemons")
@@ -46,9 +48,11 @@ def handle_call_service():
         else:
             raise HTTPException(status_code=503, detail="Serviço indisponível e não há dados em cache")
 
+
 @app.get("/")
 def read_root():
     return {"message": "Hello, World!"}
+
 
 if __name__ == "__main__":
     import uvicorn
