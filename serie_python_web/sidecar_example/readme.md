@@ -72,3 +72,50 @@ COPY . /app
 
 CMD ["python", "main.py"]
 ````
+3. Código do sidecar (service/main.py):
+````
+from fastapi import FastAPI
+# Criação de instância do FastAPI
+app = FastAPI()
+
+@app.get("/v1/services")
+def read_root():
+    return {"message": "Welcome Services!"}
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8001)
+````
+4. Dockerfile para o sidecar (service/Dockerfile):
+````
+FROM python:3.9-slim
+WORKDIR /app
+
+RUN pip install --only-binary :all: fastapi[all]
+
+COPY . /app
+
+CMD ["python", "main.py"]
+````
+5. Arquivo docker-compose.yml:
+````
+version: '3'
+services:
+  main-bff:
+    build: ./bff
+    ports:
+      - "8000:8000"
+    depends_on:
+      - services
+
+  services:
+    build: ./service
+    ports:
+      - "8001:8001"
+````
+Como executar:
+No diretório raiz, execute `docker-compose up --build`.
+
+Acesse o serviço principal em http://localhost:8000/home.
+
+Faça uma requisição POST para http://localhost:8001/v1/services com um JSON e veja o sidecar registrando os logs.
