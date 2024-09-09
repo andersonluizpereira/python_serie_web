@@ -1,0 +1,13 @@
+version: '3'
+services:
+  main-bff:
+    build: ./bff
+    ports:
+      - "8000:8000"
+    depends_on:
+      - services
+
+  services:
+    build: ./service
+    ports:
+      - "8001:8001"
