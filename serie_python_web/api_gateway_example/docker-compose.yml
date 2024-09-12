@@ -1,0 +1,19 @@
+version: '3'
+services:
+  main-bff:
+    build: ./api_gateway
+    ports:
+      - "8000:8000"
+    depends_on:
+      - cards
+      - products
+
+  cards:
+    build: ./bff
+    ports:
+      - "8001:8001"
+
+  products:
+    build: ./service
+    ports:
+      - "8002:8002"
